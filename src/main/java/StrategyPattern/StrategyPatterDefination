@@ -1,0 +1,29 @@
+The Strategy pattern defines a family of algorithms, encapsulates each one,
+ and makes them interchangeable. Strategy lets the algorithm vary independently from the clients that use it
+
+
+ public abstract class Dog {
+ public abstract void display(); //different dogs have different looks!public void eat(){}
+ public void bark(){}
+ // Other dog-like methods
+ ...
+ }
+ The display() method is made abstract as different dogs have different looks. All the other subclasses will inherit the eat and bark behaviors or override it with their own implementation. So far so good!
+
+
+ Now, what if you wanted to add some new behavior? Let’s say you need a cool robot dog that can do all kinds of tricks. Not a problem, we just need to add a performTricks() method in our Dog superclass and we are good to go.
+ But wait a minute…A robot dog should not be able to eat right? Inanimate objects cannot eat, of course. Alright, how do we solve this problem then? Well, we can override the eat() method to do nothing and it works just fine!
+ public class RobotDog extends Dog {
+ @override
+ public void eat(){} // Do nothing}
+
+
+ Nicely done! Now Robot dogs cannot eat, they can only bark or perform tricks. What about rubber dogs though? They cannot eat nor can they perform tricks. And wooden dogs cannot eat, bark, or perform tricks. We cannot always possibly override methods to do nothing, it’s not clean and it just feels hacky. Imagine doing this on a project whose design specification keeps changing every few months. Ours is just a naive example but you get the idea. So, we need to find a cleaner way to solve this problem.
+ Can the interface solve our problem?
+ How about interfaces? Let’s see if they can solve our problem. Alright, so we create a CanEat and a CanBark interface:
+ interface CanEat {
+ public void eat();}interface CanBark {
+ public void bark();}
+ We have now removed the bark() and eat() methods from the Dog superclass and added them to the respective interfaces. So that, only the dogs that can bark will implement the CanBark interface and the dogs that can eat will implement the CanEat interface. Now, no more worrying about dogs inheriting behavior that they shouldn’t, our problem is solved…or is it?
+ What happens when we have to make a change in the eating behavior of the dogs? Let’s say from now onwards each dog must include some amount of protein with their meal. You now have to modify the eat() method of all the subclasses of Dog. What if there are 50 such classes, oh the horror!
+ So interfaces only partly solve our problem of Dogs doing only what they are capable of doing — but they create another problem altogether. Interfaces do not have any implementation code, so there’s zero code reusability and potential for lots of duplicate code. How do we solve this you ask? Strategy pattern comes to the rescue!
